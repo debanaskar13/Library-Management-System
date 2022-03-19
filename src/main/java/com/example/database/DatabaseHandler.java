@@ -6,15 +6,30 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class DatabaseHandler {
-    DatabaseHandler handler;
+    private static DatabaseHandler handler = null;
 
     private static final String DB_URL = "com.mysql.cj.jdbc.Driver";
     private static Connection conn;
     private static Statement stmt;
 
-    public DatabaseHandler() {
+    private DatabaseHandler() {
         createConnection();
-        setupBookTable();
+        // CREATE BOOK TABLE
+        String sql = "CREATE TABLE IF NOT EXISTS book(id VARCHAR(200) PRIMARY KEY,title VARCHAR(200),author VARCHAR(200),publisher VARCHAR(200),isAvail BOOLEAN DEFAULT true) ";
+        execAction(sql);
+        // CREATE MEMBER TABLE
+        sql = "CREATE TABLE IF NOT EXISTS member(id VARCHAR(200) PRIMARY KEY,name VARCHAR(200),mobile VARCHAR(20),email VARCHAR(50)) ";
+        execAction(sql);
+        // CREATE ISSUE TABLE
+        sql = "CREATE TABLE IF NOT EXISTS issue(bookId VARCHAR(200) PRIMARY KEY, memberId VARCHAR(200),issue_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,renew_count INTEGER DEFAULT 0,FOREIGN KEY (bookId) REFERENCES book(id),FOREIGN KEY (memberId) REFERENCES member(id) )";
+        execAction(sql);
+    }
+
+    public static DatabaseHandler getInstance() {
+        if (handler == null) {
+            handler = new DatabaseHandler();
+        }
+        return handler;
     }
 
     void createConnection() {
@@ -23,17 +38,6 @@ public class DatabaseHandler {
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/springjdbc", "root", "deba8617@8001");
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    void setupBookTable() {
-        try {
-            String sql = "create table if not exists book(id varchar(200) primary key,title varchar(200),author varchar(200),publisher varchar(200),isAvail boolean default true) ";
-            stmt = conn.createStatement();
-            stmt.execute(sql);
-
-        } catch (Exception e) {
-            System.out.println(e);
         }
     }
 

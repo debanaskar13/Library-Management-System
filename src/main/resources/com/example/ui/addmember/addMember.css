@@ -1,0 +1,6 @@
+.saveBtn {
+  -fx-background-color: green;
+}
+.cancelBtn {
+  -fx-background-color: blue;
+}
