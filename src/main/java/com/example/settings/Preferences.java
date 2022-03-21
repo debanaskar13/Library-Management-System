@@ -11,6 +11,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 public class Preferences {
     public static final String CONFIG_FILE = "config.txt";
 
@@ -85,8 +87,12 @@ public class Preferences {
     }
 
     public static Boolean setPreferences(int nDaysWithoutFine, float finePerDay, String username, String password) {
+        String pass = password;
+        if (password.length() < 16) {
+            pass = DigestUtils.sha1Hex(password);
+        }
         Writer writer = null;
-        Preferences preferences = new Preferences(nDaysWithoutFine, finePerDay, username, password);
+        Preferences preferences = new Preferences(nDaysWithoutFine, finePerDay, username, pass);
         Gson gson = new Gson();
         try {
             writer = new FileWriter(CONFIG_FILE);
