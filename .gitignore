@@ -2,3 +2,6 @@
 target/
 /.classpath
 .vscode/
+.settings/
+/.project
+/nbactions.xml
